@@ -10,7 +10,7 @@ readme = "README.md"
 license = {text = "MIT"}
 requires-python = ">=3.8"
 authors = [
-    {name = "islee23520", email = "islee23520@github.com"}
+    {name = "islee23520", email = "lysk9884@gmail.com"}
 ]
 keywords = ["unity", "mcp", "model-context-protocol", "game-engine", "ai"]
 classifiers = [
