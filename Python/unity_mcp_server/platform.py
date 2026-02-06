@@ -128,20 +128,22 @@ def get_asset_name(version: str, platform_id: Optional[str] = None) -> str:
     Get the GitHub release asset name.
 
     From build-all.sh, the release assets follow this pattern:
-        unity-mcp-server-{version}-{platform}.{archive}
+        unity-mcp-server-{platform}.{archive}
+
+    Note: The version is NOT in the asset filename, only in the release URL path.
 
     Args:
-        version: Release version (e.g., "0.42.0")
+        version: Release version (e.g., "0.42.0") - used for URL only
         platform_id: Platform identifier (auto-detect if None)
 
     Returns:
-        Full asset name (e.g., "unity-mcp-server-0.42.0-win-x64.zip")
+        Full asset name (e.g., "unity-mcp-server-win-x64.zip")
     """
     if platform_id is None:
         platform_id = get_platform()
 
     extension = get_archive_extension(platform_id)
-    return f"unity-mcp-server-{version}-{platform_id}{extension}"
+    return f"unity-mcp-server-{platform_id}{extension}"
 
 
 def is_platform_supported(platform_id: Optional[str] = None) -> bool:
