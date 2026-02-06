@@ -91,9 +91,12 @@ class ServerDownloader:
         Returns:
             Path to binary executable
         """
+        if platform_id is None:
+            platform_id = get_platform()
         cache_path = self.get_cache_path(version)
         binary_name = self.get_binary_name(platform_id)
-        return cache_path / binary_name
+        # Archives extract with platform subdirectory (e.g., win-x64/unity-mcp-server.exe)
+        return cache_path / platform_id / binary_name
 
     def is_cached(self, version: str, platform_id: Optional[str] = None) -> bool:
         """
