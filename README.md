@@ -630,6 +630,23 @@ uvx --from unity-mcp-server unity-mcp --transport stdio --port 8080
 pipx run unity-mcp-server --transport stdio --port 8080
 ```
 
+### Install from GitHub (Development)
+
+You can install directly from a GitHub tag or branch:
+
+```bash
+# Install from specific tag
+pip install "git+https://github.com/islee23520/Unity-MCP.git@v0.1.0#subdirectory=Python"
+
+# Install from branch
+pip install "git+https://github.com/islee23520/Unity-MCP.git@feature/pypi-distribution#subdirectory=Python"
+
+# Or clone and install locally
+git clone https://github.com/islee23520/Unity-MCP.git
+cd Unity-MCP/Python
+pip install -e .
+```
+
 ### How It Works
 
 The Python wrapper automatically:
