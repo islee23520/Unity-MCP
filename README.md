@@ -223,6 +223,7 @@ Unlike other tools, this plugin works **inside your compiled game**, allowing fo
     - [`stdio` Transport](#stdio-transport)
     - [Custom `port`](#custom-port)
   - [Binary executable](#binary-executable)
+  - [PyPI (Alternative)](#pypi-alternative)
 - [How Unity MCP Architecture Works](#how-unity-mcp-architecture-works)
   - [What is `MCP`](#what-is-mcp)
   - [What is `MCP Client`](#what-is-mcp-client)
@@ -612,6 +613,56 @@ You may launch Unity `MCP Server` directly from a binary file. You would need to
 ```bash
 ./unity-mcp-server --port 8080 --plugin-timeout 10000 --client-transport stdio
 ```
+
+## PyPI (Alternative)
+
+You can also install the Unity MCP Server via PyPI using `uvx` or `pipx`:
+
+### Using uvx (recommended)
+
+```bash
+uvx --from unity-mcp-server unity-mcp --transport stdio --port 8080
+```
+
+### Using pipx
+
+```bash
+pipx run unity-mcp-server --transport stdio --port 8080
+```
+
+### How It Works
+
+The Python wrapper automatically:
+1. Detects your platform (Windows/Linux/macOS, x64/ARM64)
+2. Downloads the appropriate binary from GitHub Releases on first run
+3. Caches the binary in `~/.cache/unity-mcp-server/{version}/`
+4. Executes the binary with forwarded arguments
+
+> **Note:** This is an alternative installation method. The primary methods (Unity Plugin auto-download, Docker, or direct binary) are recommended for most users.
+
+<details>
+  <summary><code>MCP Client</code> config for uvx:</summary>
+
+```json
+{
+  "mcpServers": {
+    "ai-game-developer": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "unity-mcp-server",
+        "unity-mcp",
+        "--transport",
+        "stdio",
+        "--port",
+        "8080"
+      ]
+    }
+  }
+}
+```
+
+</details>
 
 <details>
   <summary><code>MCP Client</code> config:</summary>
