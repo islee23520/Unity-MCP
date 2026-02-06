@@ -1,0 +1,85 @@
+name: Publish to PyPI
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      force:
+        description: 'Skip version validation (not recommended)'
+        required: false
+        default: false
+        type: boolean
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/unity-mcp-server
+    permissions:
+      id-token: write  # Required for trusted publishing (OIDC)
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install build dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install build tomli
+
+      - name: Validate version matches release tag
+        if: github.event_name == 'release' && !inputs.force
+        working-directory: ./Python
+        run: |
+          # Extract version from pyproject.toml
+          PACKAGE_VERSION=$(python -c "import tomli; print(tomli.load(open('pyproject.toml', 'rb'))['project']['version'])")
+          echo "Package version from pyproject.toml: $PACKAGE_VERSION"
+          
+          # Get release tag version (strip 'v' prefix if present)
+          RELEASE_TAG="${{ github.event.release.tag_name }}"
+          RELEASE_VERSION="${RELEASE_TAG#v}"
+          echo "Release tag version: $RELEASE_VERSION"
+          
+          # Validate they match
+          if [ "$PACKAGE_VERSION" != "$RELEASE_VERSION" ]; then
+            echo "ERROR: Version mismatch!"
+            echo "  pyproject.toml version: $PACKAGE_VERSION"
+            echo "  Release tag version: $RELEASE_VERSION"
+            exit 1
+          fi
+          
+          echo "✓ Version validation passed: $PACKAGE_VERSION"
+
+      - name: Build package
+        working-directory: ./Python
+        run: python -m build
+
+      - name: List build artifacts
+        working-directory: ./Python
+        run: ls -la dist/
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: Python/dist/
+          # No password/API token needed - uses OIDC trusted publishing
+          # Repository must be configured on PyPI for trusted publishing
+          # See: https://docs.pypi.org/trusted-publishers/
+
+      - name: Upload distribution artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: Python/dist/
+          retention-days: 30
