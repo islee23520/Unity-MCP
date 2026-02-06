@@ -6,6 +6,11 @@
 .gemini
 .aider*
 .roo
+.sisyphus
+.opencode
+
+# Agents MD
+AGENTS.md
 
 # Commands and env files
 commands/TestResults
